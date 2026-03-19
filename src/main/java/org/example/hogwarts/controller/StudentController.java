@@ -1,5 +1,6 @@
 package org.example.hogwarts.controller;
 
+import org.example.hogwarts.model.Faculty;
 import org.example.hogwarts.model.Student;
 import org.example.hogwarts.service.StudentService;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class StudentController {
         return ResponseEntity.ok(studentService.create(student));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:[0-9]+}")
     public ResponseEntity<Student> getById(@PathVariable Long id) {
         return studentService.getById(id)
                 .map(ResponseEntity::ok)
@@ -34,7 +35,7 @@ public class StudentController {
         return studentService.getAll();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id:[0-9]+}")
     public ResponseEntity<Student> update(@PathVariable Long id, @RequestBody Student student) {
         Student updated = studentService.update(id, student);
         if (updated == null) {
@@ -43,13 +44,29 @@ public class StudentController {
         return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id:[0-9]+}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         boolean deleted = studentService.delete(id);
         if (!deleted) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.noContent().build();
+    }
+
+    // Шаг 1.1: студенты по возрасту (min/max из query-параметров)
+    @GetMapping(value = "/age", params = {"min", "max"})
+    public List<Student> getStudentsByAgeBetween(@RequestParam int min, @RequestParam int max) {
+        return studentService.findByAgeBetween(min, max);
+    }
+
+    // Шаг 4.1: факультет конкретного студента
+    @GetMapping("/{id:[0-9]+}/faculty")
+    public ResponseEntity<Faculty> getFacultyOfStudent(@PathVariable Long id) {
+        Faculty faculty = studentService.getFacultyOfStudent(id);
+        if (faculty == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(faculty);
     }
 }
 

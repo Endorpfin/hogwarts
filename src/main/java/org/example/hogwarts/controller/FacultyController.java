@@ -1,5 +1,6 @@
 package org.example.hogwarts.controller;
 
+import org.example.hogwarts.model.Student;
 import org.example.hogwarts.model.Faculty;
 import org.example.hogwarts.service.FacultyService;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class FacultyController {
         return ResponseEntity.ok(facultyService.create(faculty));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:[0-9]+}")
     public ResponseEntity<Faculty> getById(@PathVariable Long id) {
         return facultyService.getById(id)
                 .map(ResponseEntity::ok)
@@ -34,7 +35,7 @@ public class FacultyController {
         return facultyService.getAll();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id:[0-9]+}")
     public ResponseEntity<Faculty> update(@PathVariable Long id, @RequestBody Faculty faculty) {
         Faculty updated = facultyService.update(id, faculty);
         if (updated == null) {
@@ -43,13 +44,25 @@ public class FacultyController {
         return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id:[0-9]+}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         boolean deleted = facultyService.delete(id);
         if (!deleted) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.noContent().build();
+    }
+
+    // Шаг 1.2: поиск факультета по имени или цвету (игнорируя регистр)
+    @GetMapping("/search")
+    public List<Faculty> searchByNameOrColorIgnoreCase(@RequestParam String value) {
+        return facultyService.findByNameOrColorIgnoreCase(value);
+    }
+
+    // Шаг 4.2: студенты конкретного факультета
+    @GetMapping("/{id:[0-9]+}/students")
+    public List<Student> getStudentsOfFaculty(@PathVariable Long id) {
+        return facultyService.getStudentsOfFaculty(id);
     }
 }
 

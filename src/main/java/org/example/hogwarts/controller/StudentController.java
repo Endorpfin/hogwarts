@@ -59,6 +59,21 @@ public class StudentController {
         return studentService.findByAgeBetween(min, max);
     }
 
+    @GetMapping("/count")
+    public long getStudentsCount() {
+        return studentService.getStudentsCount();
+    }
+
+    @GetMapping("/average-age")
+    public Double getStudentsAverageAge() {
+        return studentService.getStudentsAverageAge();
+    }
+
+    @GetMapping("/last-five")
+    public List<Student> getLastFiveStudents() {
+        return studentService.findLastFiveStudents();
+    }
+
     // Шаг 4.1: факультет конкретного студента
     @GetMapping("/{id:[0-9]+}/faculty")
     public ResponseEntity<Faculty> getFacultyOfStudent(@PathVariable Long id) {

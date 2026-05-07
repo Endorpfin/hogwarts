@@ -37,6 +37,18 @@ public class StudentService {
         return studentRepository.findByAgeBetween(min, max);
     }
 
+    public long getStudentsCount() {
+        return studentRepository.getStudentsCount();
+    }
+
+    public Double getStudentsAverageAge() {
+        return studentRepository.getStudentsAverageAge();
+    }
+
+    public List<Student> findLastFiveStudents() {
+        return studentRepository.findLastFiveStudents();
+    }
+
     public Student update(Long id, Student student) {
         // Если студента нет — возвращаем null, контроллер сам решит что делать
         if (!studentRepository.existsById(id)) {
